@@ -106,6 +106,7 @@ void setup(void){
   setup_LEDs();
   setup_wifi();
   setup_webserver();
+  setup_knob();
 }
 
 /******************************************************************************
@@ -117,6 +118,7 @@ void loop(void){
   loop_wifi();
   loop_webserver();
   loop_LEDs();
+  loop_knob();
 
   delay(1);
 }

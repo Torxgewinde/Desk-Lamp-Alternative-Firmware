@@ -142,7 +142,7 @@ void setLedsAnimated(uint8_t warmwhite, uint8_t coldwhite, uint32_t duration) {
 
     // restart animation from current colors
     animation_context.previous_ww = animation_context.current_ww;
-    animation_context.previous_cw = animation_context.current_ww;
+    animation_context.previous_cw = animation_context.current_cw;
   }
 
   animation_context.ani_duration = duration;
