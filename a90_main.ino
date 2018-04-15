@@ -97,8 +97,8 @@ void setup(void){
   bool r = loadConfig();
   Log("loadConfig() --> result: "+String(r));
 
-  // overwrite the keep_alice_paket_config
-  g_send_WLAN_keep_alive_packet = false;
+  // overwrite the keep_alive_paket_config
+  //g_send_WLAN_keep_alive_packet = false;
 
   // apply hostname
   wifi_station_set_hostname((char *)g_hostname.c_str());

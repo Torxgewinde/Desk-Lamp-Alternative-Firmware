@@ -39,13 +39,26 @@ void setup_knob() {
   pinMode(ENCODER_SWITCH_PIN, INPUT);
 
   knob.write(0);
+
+  button.attachClick([](){
+    Log("Single Click!");
+
+    // change state of desk lamp
+    if( state == CONSTANTCOLOR ) {
+      state = LIGHTSOFF;
+    } else if( state == LIGHTSOFF ) {
+      state = CONSTANTCOLOR;
+
+      // come up with a bright light if dimmed very low
+      if ( g_WarmWhite + g_ColdWhite == 0 ) {
+        g_WarmWhite = 255;
+        g_ColdWhite = 0;
+      }
+    }
+  });
   
   button.attachDoubleClick([](){
     Log("Double Click!");
-  });
-  
-  button.attachClick([](){
-    Log("Single Click!");
   });
   
   button.attachLongPressStart([](){
