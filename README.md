@@ -1,6 +1,8 @@
 # Desk-Lamp-Alternative-Firmware
 An alternative firmware for the Mijia Xiaomi Desk Lamp
 
+<img src="pictures/IMG_9015.JPG" width="480">
+
 Inspiration
 -----------
 After finding [fvollmers](https://github.com/fvollmer/xiomi-desk-lamp-open-firmware) project, it was possible to create this firmware. Thanks for the inspiration and the helpful details like GPIOs and pinouts.
@@ -16,7 +18,7 @@ Initial upload of firmware
 The initial upload requires the following steps:
 1. Open the desk lamp. Three screws are hidden underneath the rubber. Slightly peel away the rubber and unfasten the screws.
 2. Then look for the PCB-A located below the rotary knob, it carries the ESP8266 module. Unfasten the screws of that PCB-A, pull off the knob gently and turn the PCB-A around. To protect the knob, I wrapped some electrical tape around it to prevent scratches and used pliers to pull it upwards, away from the PCB-A.
-3. Solder cables to `RX`, `TX` and `GPIO0`. `GND` is also required for programming, but depending on your programming cable this signal is easily accessible even when the PCB is put back in place. Soldering to the ESP8266 module will result in fragile connections. Because of that, I decided to provide cable support afterwards by applying hot-melt-glue, otherwise the connections would not last long when handled.
+3. Solder cables to `RX`, `TX` and `GPIO0`. `GND` is also required for programming, but depending on your programming cable this signal is easily accessible even when the PCB is put back in place. Soldering to the ESP8266 module will result in fragile connections. Because of that, I decided to provide cable support afterwards by applying hot-melt-glue, otherwise the connections would not last long when handled. A labeled [picture](pictures/IMG_9008.JPG) certainly helps.
 4. Put back the PCB-A, fasten the screws.
 5. Attach a 3.3V USB to serial adapter cable. Connect cables `GND` to `GND`, cables `Tx` to `Rx` and cables `Rx` to `Tx`. If you want to check correct wiring, power up the lamp and use the serial-monitor for any activity. Most likely it will just print gibberish due to mismatched baudrate, but this is enough to see `Rx` and `Tx` should be wired correctly; if there is no activity when powering the lamp try swapping the `Rx` and `Tx` lines.
 6. Connect GPIO0 to GND. Keep it pulled low until firmware has uploaded from the Arduino IDE.
