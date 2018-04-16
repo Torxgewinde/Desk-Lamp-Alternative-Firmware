@@ -27,7 +27,7 @@
 #define LENGTH_OF(x) (sizeof(x)/sizeof(x[0]))
 
 /* current state of the device */
-enum STATES {UNDEF=0, CONSTANTCOLOR, BOOTUP, FLASH, LIGHTSOFF};
+enum STATES {UNDEF=0, CONSTANTCOLOR, BOOTUP, FLASH, LIGHTSOFF, RESET_CONFIGURATION};
 struct {
   STATES state;
   String human_readable_string;
@@ -37,7 +37,8 @@ struct {
   { CONSTANTCOLOR,"Static Color Mode", "constantcolor" },
   { BOOTUP, "Booting up...", "bootup" },
   { FLASH, "Flashing Firmware...", "flash" },
-  { LIGHTSOFF, "Lights switched off", "lightsoff" }
+  { LIGHTSOFF, "Lights switched off", "lightsoff" },
+  { RESET_CONFIGURATION, "Resetting all configurations", "reset_configuration" }
 };
 STATES state = UNDEF;
 

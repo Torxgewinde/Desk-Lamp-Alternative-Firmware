@@ -26,9 +26,11 @@
 #define ENCODER_A_PIN 12
 #define ENCODER_B_PIN 13
 #define ENCODER_SWITCH_PIN 2
+#define RESET_BUTTON_PIN 14
 
 Encoder knob(ENCODER_A_PIN, ENCODER_B_PIN);
 OneButton button(ENCODER_SWITCH_PIN, true);
+OneButton resetSwitch(RESET_BUTTON_PIN, true);
 
 /******************************************************************************
 Description.: prepare the rotary knob encoder and switch
@@ -36,8 +38,6 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void setup_knob() {
-  pinMode(ENCODER_SWITCH_PIN, INPUT);
-
   knob.write(0);
 
   button.attachClick([](){
@@ -64,6 +64,11 @@ void setup_knob() {
   button.attachLongPressStart([](){
     Log("Button long press!");
   });
+
+  resetSwitch.attachLongPressStart([](){
+    Log("Reset button was pressed long, resetting configuration");
+    state = RESET_CONFIGURATION;
+  });
 }
 
 /******************************************************************************
@@ -74,8 +79,9 @@ Return Value: -
 void loop_knob() {
   long knob_position = knob.read();
   button.tick();
+  resetSwitch.tick();
 
-  if(knob_position != 0) {
+  if(knob_position != 0 && state != LIGHTSOFF) {
     Log("Knob changed by: " + String(knob_position) + ".");
 
     g_WarmWhite = constrain(knob_position*3 + g_WarmWhite, 0, 255);

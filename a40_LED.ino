@@ -196,11 +196,18 @@ void loop_LEDs() {
       
     case CONSTANTCOLOR:
       setLedsAnimated(g_WarmWhite, g_ColdWhite, 1000);
-      //setLeds(g_WarmWhite, g_ColdWhite);
       break;
 
     case LIGHTSOFF:
       setLedsAnimated(0, 0, 2000);
+      break;
+
+    case RESET_CONFIGURATION:
+      // hectic animation during reset, since millis only changes every millisecond
+      // this animation will not depend very much on how often this loop-function is executed
+      g_ColdWhite = millis() % 256;
+      g_WarmWhite = 255 - g_ColdWhite;
+      setLeds(g_WarmWhite, g_ColdWhite);
       break;
 
     default:

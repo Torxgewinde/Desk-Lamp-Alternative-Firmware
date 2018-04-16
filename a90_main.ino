@@ -114,12 +114,27 @@ Description.: execute the different subtasks, none may block or not return
 Input Value.: -
 Return Value: -
 ******************************************************************************/
-void loop(void){
+void loop(void) {
   loop_wifi();
   loop_webserver();
   loop_LEDs();
   loop_knob();
 
-  delay(1);
+  if(state == RESET_CONFIGURATION) {
+    Log("deleting configuration file /config.json");
+    
+    SPIFFS.remove("/config.json");
+
+    //keep running for ~5 more seconds, then restart
+    for(int i=0; i<5000; i++) {
+      loop_wifi();
+      loop_webserver();
+      loop_LEDs();
+
+      // slow down this loop and yield at once
+      delay(1);
+    }
+    ESP.restart();
+  }
 }
 

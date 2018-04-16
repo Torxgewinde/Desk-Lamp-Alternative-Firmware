@@ -56,6 +56,7 @@ void loop_wifi() {
   //just meaningless data traffic will hopefully fix it
   //a single UDP packet is send to the gateway IP
   static unsigned long then = 0;
+  static bool reset_config = false;
 
   // for using millis be aware of overflow every ~50 days
   // but using substraction is "overflow-safe"
@@ -69,5 +70,15 @@ void loop_wifi() {
     Udp.endPacket();
 
     Log("WiFi kept busy, RSSI: "+ String(WiFi.RSSI()) +", Connected: "+ String(WiFi.isConnected()));
+  }
+
+  // delete all WiFi Manager settings, but only erase it once
+  if(state == RESET_CONFIGURATION && !reset_config) {
+    Log("Resetting WiFi Manager");
+    
+    WiFiManager wifiManager;
+    wifiManager.resetSettings();
+    
+    reset_config = true;
   }
 }
