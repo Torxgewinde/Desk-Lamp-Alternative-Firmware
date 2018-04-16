@@ -43,7 +43,7 @@ struct {
 STATES state = UNDEF;
 
 /* Variables for the warm and cold white LEDs */
-uint8_t g_WarmWhite, g_ColdWhite;
+float g_brightness, g_ratio;
 
 /* Hostname, this name will show up in DHCP requests */
 String g_hostname;

@@ -86,17 +86,22 @@ void handleColorGET() {
   JsonObject& root = jsonBuffer.createObject();
   String json;
 
-  if(server.hasArg("warmwhite") && server.hasArg("coldwhite")) {
-    Log("received new color values, setting state and colors (WW:"+
-      server.arg("warmwhite") + ", CW:" +
-      server.arg("coldwhite") + ")");
+  if(server.hasArg("ratio") && server.hasArg("brightness")) {
+    Log("received new color values, setting state and colors (ratio:"+
+      server.arg("ratio") + ", brightness:" +
+      server.arg("brightness") + ")");
     state = CONSTANTCOLOR;
-    g_WarmWhite = server.arg("warmwhite").toInt();
-    g_ColdWhite = server.arg("coldwhite").toInt();
+    g_ratio = server.arg("ratio").toFloat();
+    g_brightness = server.arg("brightness").toFloat();
   }
 
-  root["warmwhite"] = g_WarmWhite;
-  root["coldwhite"] = g_ColdWhite;
+  root["ratio"] = g_ratio;
+  root["brightness"] = g_brightness;
+
+  uint8_t warmwhite, coldwhite;
+
+  root["ww"] = 255 * g_ratio * g_brightness;
+  root["cw"] = 255 * (1-g_ratio) * g_brightness;
 
   root.printTo(json);
   server.send(200, "text/json", json);
@@ -158,8 +163,8 @@ void handleAllGET() {
     }
   }
   
-  root["warmwhite"] = g_WarmWhite;
-  root["coldwhite"] = g_ColdWhite;
+  root["ratio"] = g_ratio;
+  root["brightness"] = g_brightness;
 
   root["uptime"] = millis();
   root["heap"] = ESP.getFreeHeap();

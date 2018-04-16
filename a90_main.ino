@@ -33,8 +33,8 @@ bool loadConfig() {
   if (!configFile || (configFile.size() > 1024)) {
     g_hostname = "XIAOMI_DESK_LAMP";
     state = CONSTANTCOLOR;
-    g_WarmWhite = 255;
-    g_ColdWhite = 0;
+    g_ratio = 1.0;
+    g_brightness = 1.0;
     g_send_WLAN_keep_alive_packet = true;
     
     return false;
@@ -59,8 +59,8 @@ bool loadConfig() {
 
   g_hostname = strdup(json["hostname"]);
   g_send_WLAN_keep_alive_packet = json["send_WLAN_keep_alive_packet"];  
-  g_WarmWhite = json["startupcolor_warmwhite"];
-  g_ColdWhite = json["startupcolor_coldwhite"];
+  g_ratio = json["ratio"];
+  g_brightness = json["brightness"];
 
   return true;
 }

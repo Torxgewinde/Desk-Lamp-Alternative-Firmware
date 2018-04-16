@@ -49,10 +49,9 @@ void setup_knob() {
     } else if( state == LIGHTSOFF ) {
       state = CONSTANTCOLOR;
 
-      // come up with a bright light if dimmed very low
-      if ( g_WarmWhite + g_ColdWhite == 0 ) {
-        g_WarmWhite = 255;
-        g_ColdWhite = 0;
+      // come up with a bit of light if dimmed very low
+      if ( g_brightness <= 0.01 ) {
+        g_brightness = 0.02;
       }
     }
   });
@@ -62,7 +61,11 @@ void setup_knob() {
   });
   
   button.attachLongPressStart([](){
-    Log("Button long press!");
+    Log("Button long press start!");
+  });
+
+  button.attachLongPressStop([](){
+    Log("Button long press stop!");
   });
 
   resetSwitch.attachLongPressStart([](){
@@ -77,16 +80,33 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void loop_knob() {
-  long knob_position = knob.read();
+  long knob_delta = knob.read();
+  knob.write(0);
+  
   button.tick();
   resetSwitch.tick();
 
-  if(knob_position != 0 && state != LIGHTSOFF) {
-    Log("Knob changed by: " + String(knob_position) + ".");
+  if(knob_delta == 0)
+    return;
 
-    g_WarmWhite = constrain(knob_position*3 + g_WarmWhite, 0, 255);
-    g_ColdWhite = 0;
+  Log("Knob changed by: " + String(knob_delta) + ".");
 
-    knob.write(0);
+  switch(state) {
+    case CONSTANTCOLOR:
+      if( button.isLongPressed() ) {
+        g_ratio = constrain(g_ratio + 0.01*knob_delta, 0.0, 1.0);
+        Log("ratio changed to: " + String(g_ratio) + ".");
+      } else {
+        g_brightness = constrain(g_brightness + 0.01*knob_delta, 0.0, 1.0);
+        Log("brightness changed to: " + String(g_brightness) + ".");
+      }
+      break;
+
+    case LIGHTSOFF:
+      // knob turning ignored when light is off
+      break;
+
+    default:
+      ;
   }
 }
