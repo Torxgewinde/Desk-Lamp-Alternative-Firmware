@@ -58,7 +58,9 @@ Upload a single file file to SPIFFS:
 Web-API
 -------
 To send commands to the desk lamp or read the state, the following HTTP-handlers are implemented:
- * Set color to 100% warmwhite: `http://192.168.2.99/color?warmwhite=255&coldwhite=0`
+ * Set color to 100% warmwhite: `http://192.168.2.99/color?ratio=1.0&brightness=1.0`
+ * Set color to 100% coldwhite: `http://192.168.2.99/color?ratio=0.0&brightness=1.0`
+ * Set color to 25% coldwhite and 25% warmwhite: `http://192.168.2.99/color?ratio=0.5&brightness=0.5`
  * Get color as JSON: `http://192.168.2.99/color`
  * Get current state as JSON: `http://192.168.2.99/all`
  * Get log messages: `http://192.168.2.99/log`
