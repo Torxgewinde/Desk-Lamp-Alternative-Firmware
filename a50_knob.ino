@@ -59,14 +59,6 @@ void setup_knob() {
   button.attachDoubleClick([](){
     Log("Double Click!");
   });
-  
-  button.attachLongPressStart([](){
-    Log("Button long press start!");
-  });
-
-  button.attachLongPressStop([](){
-    Log("Button long press stop!");
-  });
 
   resetSwitch.attachLongPressStart([](){
     Log("Reset button was pressed long, resetting configuration");
@@ -93,7 +85,8 @@ void loop_knob() {
 
   switch(state) {
     case CONSTANTCOLOR:
-      if( button.isLongPressed() ) {
+      // if Button is held down change color otherwise change brightness
+      if( !digitalRead(ENCODER_SWITCH_PIN) ) {
         g_ratio = constrain(g_ratio + 0.01*knob_delta, 0.0, 1.0);
         Log("ratio changed to: " + String(g_ratio) + ".");
       } else {

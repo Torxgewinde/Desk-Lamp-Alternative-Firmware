@@ -31,7 +31,7 @@ bool loadConfig() {
   File configFile = SPIFFS.open("/config.json", "r");
   
   if (!configFile || (configFile.size() > 1024)) {
-    g_hostname = "XIAOMI_DESK_LAMP";
+    g_hostname = "XIAOMI-DESK-LAMP";
     state = CONSTANTCOLOR;
     g_ratio = 1.0;
     g_brightness = 1.0;

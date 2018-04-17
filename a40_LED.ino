@@ -31,44 +31,22 @@
 /******************************************************************************
 Description.: The visual impression of the LEDs is not linear like the PWM,
               thus to make the range match the visual impression better
-              a gamma correction is usual. Here, just one color channel
-              is adjusted, which fixes the most important issues. Dependencies
-              of one color with the others is not improved this way, so color
-              shifts in mixed colors are still possible.
-              Credit for the LUT values goes to
-              http://rgb-123.com/ws2812-color-output/
-
-              For this lamp the table was manually adjusted in the low 
-              and upper range
-              
+              a gamma correction is usual.
 Input Value.: brightness level for one color (0 .. 255)
 Return Value: gamma corrected value (0 .. 255)
 ******************************************************************************/
 uint8_t gamma_correction(uint8_t value) {
-  uint8_t gammaE[] = {
-     0,  0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, //16
-    11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, //32
-    11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, //48
-    11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, //64
-    19, 19, 20, 21, 21, 22, 22, 23, 23, 24, 25, 25, 26, 27, 27, 28, //80
-    29, 29, 30, 31, 31, 32, 33, 34, 34, 35, 36, 37, 37, 38, 39, 40, //96
-    40, 41, 42, 43, 44, 45, 46, 46, 47, 48, 49, 50, 51, 52, 53, 54, //112
-    55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, //128
-    71, 72, 73, 74, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 88, 89, //144
-    90, 91, 93, 94, 95, 96, 98, 99,100,102,103,104,106,107,109,110, //160
-    111,113,114,116,117,119,120,121,123,124,126,128,129,131,132,134,//176
-    135,137,138,140,142,143,145,146,148,150,151,153,155,157,158,160,//192
-    162,163,165,167,169,170,172,174,176,178,179,181,183,185,187,189,//208
-    191,193,194,196,198,200,202,204,206,208,210,212,214,216,218,220,//224
-    222,224,227,229,231,233,235,237,239,241,244,246,248,250,252,255,//240
-    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};//256
-  
-  return gammaE[value];
+  //override the gamma function for low values
+  if(value < 2)
+    return 0;
+
+  // since ESP8266 is reasonably fast, floating point calculations are acceptable
+  // the alternative is using a LUT, if running low on CPU cycles.
+  return constrain(11 + round(0.00277*value*value + 0.25574*value), 0, 255);
 }
 
 /******************************************************************************
-Description.: set the LED, operating all LEDs at the same time exceeds the power
-              supply limit
+Description.: set the LED
 Input Value.: brightness level for leds
 Return Value: -
 ******************************************************************************/
@@ -158,17 +136,29 @@ void setLedsAnimated(uint8_t warmwhite, uint8_t coldwhite, uint32_t duration) {
 }
 
 /******************************************************************************
+Description.: set the LEDs, not immediatly but fading from previous color
+              to the specified within the specified time
+Input Value.: brightness level for LEDs
+              ration of coldwhite to warmwhite, eg. 1.0 is warmwhite, 0.0 is cw
+              fade_time is the time of animation in milliseconds
+Return Value: -
+******************************************************************************/
+void setLedsAnimatedRB(float ratio, float brightness, uint32_t duration) {
+  uint8_t warmwhite, coldwhite;
+
+  warmwhite = 255 * ratio * brightness;
+  coldwhite = 255 * (1-ratio) * brightness;
+
+  setLedsAnimated(warmwhite, coldwhite, duration);
+}
+
+/******************************************************************************
 Description.: prepare the LEDs, switch on to show lamp is working and provide
               light
 Input Value.: -
 Return Value: -
 ******************************************************************************/
 void setup_LEDs() {
-  uint8_t warmwhite, coldwhite;
-
-  warmwhite = 255 * g_ratio * g_brightness;
-  coldwhite = 255 * (1-g_ratio) * g_brightness;
-  
   pinMode(WARMWHITE_PIN, OUTPUT);
   pinMode(COLDWHITE_PIN, OUTPUT);
   
@@ -186,7 +176,7 @@ void setup_LEDs() {
 
   animation_context.busy = false;
 
-  setLedsAnimated(warmwhite, coldwhite, 1000);
+  setLedsAnimatedRB(g_ratio, g_brightness, 1000);
 }
 
 /******************************************************************************
@@ -195,18 +185,15 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void loop_LEDs() {
-  uint8_t warmwhite, coldwhite;
-
-  warmwhite = 255 * g_ratio * g_brightness;
-  coldwhite = 255 * (1-g_ratio) * g_brightness;
-
+  uint8_t a;
+  
   switch(state) {
     case BOOTUP:
-      setLeds(warmwhite, coldwhite);
+      setLedsAnimatedRB(g_ratio, g_brightness, 0);
       break;
       
     case CONSTANTCOLOR:
-      setLedsAnimated(warmwhite, coldwhite, 500);
+      setLedsAnimatedRB(g_ratio, g_brightness, 500);
       break;
 
     case LIGHTSOFF:
@@ -216,9 +203,8 @@ void loop_LEDs() {
     case RESET_CONFIGURATION:
       // hectic animation during reset, since millis only changes every millisecond
       // this animation will not depend very much on how often this loop-function is executed
-      coldwhite = millis() % 256;
-      warmwhite = 255 - coldwhite;
-      setLeds(warmwhite, coldwhite);
+      a = millis() % 256;
+      setLeds(a, 255-a);
       break;
 
     default:
