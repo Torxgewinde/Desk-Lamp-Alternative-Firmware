@@ -20,9 +20,15 @@
 #                                                                              #
 ********************************************************************************
 
-Compiler:
-- Arduino 1.8.2
-- ESP8266 Toolchain 2.4.1
+IDE and toolchain:
+- Arduino 1.8.5
+- ESP8266 Toolchain 2.4.2
+
+Additional libraries:
+- Arduino JSON, Version 5.13.4
+- WiFiManager, Version 0.14.0
+- Encoder, Version 1.4.1
+- OneButton, Version 1.3.0
 
 Hardware: 
 - Xiaomi Desk Lamp
