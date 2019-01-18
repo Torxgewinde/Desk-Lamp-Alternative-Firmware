@@ -21,6 +21,7 @@
 ********************************************************************************/
 
 #include <ArduinoJson.h>
+#include <FS.h>
 #include <deque>
 
 //determine array length
@@ -45,10 +46,8 @@ STATES state = UNDEF;
 /* Variables for the warm and cold white LEDs */
 float g_brightness, g_ratio;
 
-/* Hostname, this name will show up in DHCP requests */
-String g_hostname;
-
-bool g_send_WLAN_keep_alive_packet;
+/* only allow to write to flash if commando was set */
+bool g_enableUpdates = false;
 
 /* Storage for most recent logging messages */
 std::deque<String> log_messages;
@@ -63,5 +62,65 @@ void Log(String text) {
   Serial.println(text);
 }
 
-/* only allow to write to flash if commando was set */
-bool enableUpdates = false;
+// configuration, values are either from SPIFFS or default values
+struct {
+  char hostname[64];
+  float ratio, brightness;
+  bool send_WLAN_keep_alive_packet;
+  bool disable_WiFi;
+} configuration;
+
+/******************************************************************************
+Description.: read config file from SPIFFS
+Input Value.: -
+Return Value: -
+******************************************************************************/
+void readConfig() {
+  File configFile = SPIFFS.open("/config.json", "r");
+
+  StaticJsonBuffer<512> jsonBuffer;
+  
+  JsonObject &root = jsonBuffer.parseObject(configFile);
+  
+  if (!root.success())
+    Log("Failed to read config file /config.json from SPIFFS, using default values");
+
+  strlcpy(configuration.hostname, root["hostname"] | "XIAOMI-DESK-LAMP", sizeof(configuration.hostname));
+  configuration.ratio = root["ratio"] | 1.0;
+  configuration.brightness = root["brightness"] | 1.0;
+  configuration.send_WLAN_keep_alive_packet = root["send_WLAN_keep_alive_packet"] | true;
+  configuration.disable_WiFi = root["disable_WiFi"] | false;
+
+  configFile.close();
+}
+
+/******************************************************************************
+Description.: save config file to SPIFFS
+Input Value.: -
+Return Value: -
+******************************************************************************/
+void writeConfig() {
+
+  File configFile = SPIFFS.open("/config.json", "w");
+  if (!configFile) {
+    Log("Could not open config file in SPIFFS");
+    return;
+  }
+
+  StaticJsonBuffer<512> jsonBuffer;
+  JsonObject &root = jsonBuffer.createObject();
+
+  root["hostname"] = configuration.hostname;
+  root["ratio"] = configuration.ratio;
+  root["brightness"] = configuration.brightness;
+  root["send_WLAN_keep_alive_packet"] = configuration.send_WLAN_keep_alive_packet;
+  root["disable_WiFi"] = configuration.disable_WiFi;
+
+  // Serialize JSON to file
+  if (root.printTo(configFile) == 0) {
+    Log("Could not store config in SPIFFS");
+  }
+
+  configFile.close();
+}
+

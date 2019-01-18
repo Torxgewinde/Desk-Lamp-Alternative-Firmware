@@ -64,6 +64,13 @@ void setup_knob() {
     Log("Reset button was pressed long, resetting configuration");
     state = RESET_CONFIGURATION;
   });
+
+  resetSwitch.attachDoubleClick([](){
+    Log("Reset button was pressed twice, this toggles WiFi on/off");
+    configuration.disable_WiFi = !configuration.disable_WiFi;
+    writeConfig();
+    ESP.restart();
+  });
 }
 
 /******************************************************************************

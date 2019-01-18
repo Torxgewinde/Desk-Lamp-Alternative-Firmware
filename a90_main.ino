@@ -23,49 +23,6 @@
 #include <Ticker.h>
 
 /******************************************************************************
-Description.: read config file from SPIFFS
-Input Value.: -
-Return Value: true if config read, false in case of error
-******************************************************************************/
-bool loadConfig() {
-  File configFile = SPIFFS.open("/config.json", "r");
-  
-  if (!configFile || (configFile.size() > 1024)) {
-    g_hostname = "XIAOMI-DESK-LAMP";
-    state = CONSTANTCOLOR;
-    g_ratio = 1.0;
-    g_brightness = 1.0;
-    g_send_WLAN_keep_alive_packet = true;
-    
-    return false;
-  }
-
-  int size = configFile.size();
-
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
-
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
-  configFile.readBytes(buf.get(), size);
-
-  StaticJsonBuffer<500> jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(buf.get());
-
-  if (!json.success()) {
-    return false;
-  }
-
-  g_hostname = strdup(json["hostname"]);
-  g_send_WLAN_keep_alive_packet = json["send_WLAN_keep_alive_packet"];  
-  g_ratio = json["ratio"];
-  g_brightness = json["brightness"];
-
-  return true;
-}
-
-/******************************************************************************
 Description.: prepares everything, sets the light up first and then does the
               more time consuming tasks
 Input Value.: -
@@ -94,19 +51,21 @@ void setup(void){
   }
 
   // read configuration file
-  bool r = loadConfig();
-  Log("loadConfig() --> result: "+String(r));
+  readConfig();
 
-  // overwrite the keep_alive_paket_config
-  //g_send_WLAN_keep_alive_packet = false;
+  // apply brightness and ratio from config
+  g_brightness = configuration.brightness;
+  g_ratio = configuration.ratio;
 
   // apply hostname
-  wifi_station_set_hostname((char *)g_hostname.c_str());
+  wifi_station_set_hostname(configuration.hostname);
   
   setup_LEDs();
   setup_wifi();
   setup_webserver();
   setup_knob();
+
+  state = CONSTANTCOLOR;
 }
 
 /******************************************************************************

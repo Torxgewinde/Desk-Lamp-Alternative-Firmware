@@ -35,7 +35,7 @@ Description.: The visual impression of the LEDs is not linear like the PWM,
 Input Value.: brightness level for one color (0 .. 255)
 Return Value: gamma corrected value (0 .. 255)
 ******************************************************************************/
-uint8_t gamma_correction(uint8_t value) {
+int gamma_correction(uint8_t value) {
   //override the gamma function for low values
   if(value < 2)
     return 0;
@@ -50,7 +50,7 @@ Description.: set the LED
 Input Value.: brightness level for leds
 Return Value: -
 ******************************************************************************/
-void setLeds(uint8_t warmwhite, uint8_t coldwhite) {
+void setLeds(uint8_t warmwhite, uint8_t coldwhite) {  
   analogWrite(WARMWHITE_PIN, gamma_correction(warmwhite));
   analogWrite(COLDWHITE_PIN, gamma_correction(coldwhite));
 }

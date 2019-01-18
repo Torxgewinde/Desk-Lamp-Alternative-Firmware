@@ -35,12 +35,15 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void setup_wifi() {
-  WiFiManager wifiManager;
 
-  //reset settings - for testing
-  //wifiManager.resetSettings();
+  // switch off WiFi if it is disabled
+  if( configuration.disable_WiFi ) {
+    Log("Wifi is configured to be off");
+    WiFi.mode(WIFI_OFF);
+    return;
+  }
   
-  wifiManager.setConfigPortalTimeout(600);
+  WiFiManager wifiManager;  
   wifiManager.autoConnect("Xiaomi Desk Lamp");
 
   Log("WiFi connected, RSSI: "+ String(WiFi.RSSI()));
@@ -52,15 +55,20 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void loop_wifi() {
+  if( configuration.disable_WiFi ) return;
+  
   //because of having issues with an unresposive connection
   //just meaningless data traffic will hopefully fix it
   //a single UDP packet is send to the gateway IP
   static unsigned long then = 0;
+
+  // if the WiFi config has been reset, there is no use to do that over and over again
+  // this variable assists in remembering if we already reset it
   static bool reset_config = false;
 
   // for using millis be aware of overflow every ~50 days
   // but using substraction is "overflow-safe"
-  if( g_send_WLAN_keep_alive_packet && (millis()-then >= 30000) ) {
+  if( configuration.send_WLAN_keep_alive_packet && (millis()-then >= 30000) ) {
     then = millis();
 
     //UDP port 9 is supposed to discard packets or it will simply not return

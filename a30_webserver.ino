@@ -100,8 +100,8 @@ void handleColorGET() {
 
   uint8_t warmwhite, coldwhite;
 
-  root["ww"] = 255 * g_ratio * g_brightness;
-  root["cw"] = 255 * (1-g_ratio) * g_brightness;
+  root["ww"] = (int)(255 * g_ratio * g_brightness);
+  root["cw"] = (int)(255 * (1-g_ratio) * g_brightness);
 
   root.printTo(json);
   server.send(200, "text/json", json);
@@ -117,7 +117,7 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void handleFileUpload() {
-  if ( !enableUpdates ) {
+  if ( !g_enableUpdates ) {
     server.send(200, "text/plain", "locked");
     return;
   }
@@ -182,26 +182,17 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void handleConfigGET() {
-  StaticJsonBuffer<500> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-
   if(server.hasArg("hostname") &&
-     server.hasArg("startupcolor_warmwhite") &&
-     server.hasArg("startupcolor_coldwhite") ) {
+     server.hasArg("ratio") &&
+     server.hasArg("brightness") ) {
 
-    Log("a new config was submitted");
+    Log("a new config was submitted via HTTP");
 
-    root["hostname"] = server.arg("hostname");
-    root["startupcolor_coldwhite"] = server.arg("startupcolor_coldwhite").toInt();
-    root["startupcolor_warmwhite"] = server.arg("startupcolor_warmwhite").toInt();
-    root["send_WLAN_keep_alive_packet"] = g_send_WLAN_keep_alive_packet;
+    server.arg("hostname").toCharArray(configuration.hostname, sizeof(configuration.hostname));
+    configuration.ratio = server.arg("ratio").toFloat();
+    configuration.brightness = server.arg("brightness").toFloat();
 
-    // store to file
-    File fsConfig = SPIFFS.open("/config.json", "w");
-    if (fsConfig) {
-      root.printTo(fsConfig);
-      fsConfig.close();
-    }
+    writeConfig();
   }
 
   if(!handleFileRead("/config.json"))
@@ -214,7 +205,7 @@ Description.: prepares the webserver, sets up the special paths and their
 Input Value.: -
 Return Value: -
 ******************************************************************************/
-void setup_webserver() {
+void setup_webserver() {  
   //called when the url is not defined here
   //use it to load content from SPIFFS
   server.onNotFound([](){
@@ -228,7 +219,7 @@ void setup_webserver() {
 
   /* deleted the files present on SPIFFS file system */
   server.on("/format", HTTP_GET, [](){
-    if ( !enableUpdates ) {
+    if ( !g_enableUpdates ) {
       server.send(200, "text/plain", "locked");
       return;
     }
@@ -244,11 +235,11 @@ void setup_webserver() {
 
   server.on("/unlock", HTTP_GET, [](){
     if( server.arg("password") == "securitybyobscurity" ) {
-      enableUpdates = true;
+      g_enableUpdates = true;
       httpUpdater.setup(&server, "/update");
     }
     
-    server.send(200, "text/plain", "enableUpdates: "+String(enableUpdates));
+    server.send(200, "text/plain", "enableUpdates: "+String(g_enableUpdates));
     });
 
   server.on("/log", HTTP_GET, [](){
@@ -265,7 +256,7 @@ void setup_webserver() {
     });
   
   server.on("/edit", HTTP_POST, [](){ 
-    if ( !enableUpdates ) {
+    if ( !g_enableUpdates ) {
       server.send(200, "text/plain", "locked");
       return;
     }
