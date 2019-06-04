@@ -21,7 +21,7 @@
 ********************************************************************************
 
 IDE and toolchain:
-- Arduino 1.8.5
+- Arduino 1.8.9
 - ESP8266 Toolchain 2.4.1 <-- Beware: 2.4.2 does not work! analogWrite() has strange issues
 
 Additional libraries:
