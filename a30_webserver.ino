@@ -91,8 +91,16 @@ void handleColorGET() {
       server.arg("ratio") + ", brightness:" +
       server.arg("brightness") + ")");
     state = CONSTANTCOLOR;
-    g_ratio = server.arg("ratio").toFloat();
-    g_brightness = server.arg("brightness").toFloat();
+    
+    float ratio = server.arg("ratio").toFloat();
+    if (ratio > 1) ratio = 1;
+    if (ratio < 0) ratio = 0;
+    g_ratio = ratio;
+    
+    float brightness = server.arg("brightness").toFloat();
+    if (brightness > 1.2) brightness = 1.2;
+    if (brightness < 0) brightness = 0;
+    g_brightness = brightness;
   }
 
   root["ratio"] = g_ratio;
