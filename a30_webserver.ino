@@ -108,6 +108,40 @@ void handleColorGET() {
 }
 
 /******************************************************************************
+Description.: handles a request to path "/split"
+              accepts HTTP-GET parameters for color, sets state accordingly
+Input Value.: -
+Return Value: -
+******************************************************************************/
+void handleSplitGET() {
+  StaticJsonDocument<500> root;
+  String json;
+
+  if(server.hasArg("warm") && server.hasArg("cold")) {
+    Log("received new color values, split in cold and warm, setting state and colors (warm level:"+
+      server.arg("warm") + ", cold level:" +
+      server.arg("cold") + ")");
+    state = CONSTANTCOLOR;
+    float cold = server.arg("cold").toFloat();
+    float warm = server.arg("warm").toFloat();
+    if (cold > 0.6) cold = 0.6;
+    if (cold < 0) cold = 0;
+    if (warm > 0.6) warm = 0.6;
+    if (warm < 0) warm = 0;
+    g_ratio = warm / (cold + warm);
+    g_brightness = warm + cold;
+  }
+
+  root["ratio"] = g_ratio;
+  root["brightness"] = g_brightness;
+  root["warm_level"] = (int)(255 * g_ratio * g_brightness);
+  root["cold_level"] = (int)(255 * (1-g_ratio) * g_brightness);
+
+  serializeJson(root,json);
+  server.send(200, "text/json", json);
+}
+
+/******************************************************************************
 Description.: handles uploaded files
               this is needed to handle new files to be stored in the SPIFFS
               partition of the flash.
@@ -215,6 +249,7 @@ void setup_webserver() {
 
   server.on("/all", HTTP_GET, handleAllGET);
   server.on("/color", HTTP_GET, handleColorGET);
+  server.on("/split", HTTP_GET, handleSplitGET);
   server.on("/config.json", HTTP_GET, handleConfigGET);
 
   /* deleted the files present on SPIFFS file system */
