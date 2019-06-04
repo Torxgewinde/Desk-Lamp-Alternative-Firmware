@@ -78,11 +78,11 @@ Return Value: -
 void readConfig() {
   File configFile = SPIFFS.open("/config.json", "r");
 
-  StaticJsonBuffer<512> jsonBuffer;
+  StaticJsonDocument<512> root;
   
-  JsonObject &root = jsonBuffer.parseObject(configFile);
-  
-  if (!root.success())
+  DeserializationError error = deserializeJson(root, configFile);
+
+  if(error)
     Log("Failed to read config file /config.json from SPIFFS, using default values");
 
   strlcpy(configuration.hostname, root["hostname"] | "XIAOMI-DESK-LAMP", sizeof(configuration.hostname));
@@ -107,8 +107,7 @@ void writeConfig() {
     return;
   }
 
-  StaticJsonBuffer<512> jsonBuffer;
-  JsonObject &root = jsonBuffer.createObject();
+  StaticJsonDocument<512> root;
 
   root["hostname"] = configuration.hostname;
   root["ratio"] = configuration.ratio;
@@ -117,10 +116,11 @@ void writeConfig() {
   root["disable_WiFi"] = configuration.disable_WiFi;
 
   // Serialize JSON to file
-  if (root.printTo(configFile) == 0) {
+
+  int bytesWritten = serializeJson(root, configFile);
+  if (bytesWritten == 0) {
     Log("Could not store config in SPIFFS");
   }
 
   configFile.close();
 }
-
