@@ -82,8 +82,7 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void handleColorGET() {
-  StaticJsonBuffer<500> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
+  StaticJsonDocument<500> root;
   String json;
 
   if(server.hasArg("ratio") && server.hasArg("brightness")) {
@@ -103,7 +102,7 @@ void handleColorGET() {
   root["ww"] = (int)(255 * g_ratio * g_brightness);
   root["cw"] = (int)(255 * (1-g_ratio) * g_brightness);
 
-  root.printTo(json);
+  serializeJson(root,json);
   server.send(200, "text/json", json);
 }
 
@@ -150,8 +149,7 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void handleAllGET() {
-  StaticJsonBuffer<500> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
+  StaticJsonDocument<500> root;
   String json;
 
   // translate current state to string
@@ -170,7 +168,7 @@ void handleAllGET() {
   root["heap"] = ESP.getFreeHeap();
   root["RSSI"] = WiFi.RSSI();
 
-  root.printTo(json);
+  serializeJson(root,json);
   server.send(200, "text/json", json);  
 }
 

@@ -25,7 +25,7 @@ IDE and toolchain:
 - ESP8266 Toolchain 2.4.1 <-- Beware: 2.4.2 does not work! analogWrite() has strange issues
 
 Additional libraries:
-- Arduino JSON, Version 5.13.4
+- Arduino JSON, Version 6.11.0
 - WiFiManager, Version 0.14.0
 - Encoder, Version 1.4.1
 - OneButton, Version 1.3.0
