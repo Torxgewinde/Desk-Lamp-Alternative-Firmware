@@ -1,7 +1,6 @@
 language: c
 env:
   - BD=esp8266:esp8266:generic:xtal=80,eesz=1M64,ip=lm2f,exception=disabled
-  - ARDUINO_LIBS="ArduinoJson:6.11.0,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.3.0"
 before_install:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
   - sleep 3
@@ -15,7 +14,7 @@ install:
   - arduino --install-boards esp8266:esp8266
   - arduino --board $BD --save-prefs
   - arduino --pref "compiler.warning_level=all" --save-prefs
-  - arduino --install-library $ARDUINO_LIBS
+  - arduino --install-library "ArduinoJson:6.11.0,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.3.0"
 script:
   - "echo $PWD"
   - "echo $HOME"
