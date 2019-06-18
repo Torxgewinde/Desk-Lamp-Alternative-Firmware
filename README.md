@@ -1,5 +1,5 @@
 # Desk-Lamp-Alternative-Firmware
-An alternative firmware for the Mijia Xiaomi Desk Lamp
+An alternative firmware for the Mijia Xiaomi Desk Lamp [![Build Status](https://travis-ci.com/Torxgewinde/Desk-Lamp-Alternative-Firmware.svg?branch=master)](https://travis-ci.com/Torxgewinde/Desk-Lamp-Alternative-Firmware)
 
 <img src="pictures/IMG_9015.JPG" width="480">
 
