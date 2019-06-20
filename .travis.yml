@@ -1,7 +1,8 @@
 language: generic
 env:
-  - BD=esp8266:esp8266:generic:xtal=80,vt=flash,exception=disabled,ResetMethod=ck,CrystalFreq=26,FlashFreq=40,FlashMode=qio,eesz=1M64,led=2,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200
-  - ARDUINO_VERSION_TO_USE=1.8.9
+  global:
+    - BD=esp8266:esp8266:generic:xtal=80,vt=flash,exception=disabled,ResetMethod=ck,CrystalFreq=26,FlashFreq=40,FlashMode=qio,eesz=1M64,led=2,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200
+    - ARDUINO_VERSION_TO_USE=1.8.9
 before_install:
   - wget https://downloads.arduino.cc/arduino-$ARDUINO_VERSION_TO_USE-linux64.tar.xz
   - tar xf arduino-$ARDUINO_VERSION_TO_USE-linux64.tar.xz
