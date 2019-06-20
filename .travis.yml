@@ -26,14 +26,12 @@ language: generic
 env:
   global:
      - ARDUINO_VERSION_TO_USE=1.8.9
-     - BD="esp8266:esp8266:generic:CrystalFreq=26,FlashFreq=40,FlashMode=qio,CpuFrequency=80,FlashSize=1M64,Debug=Disabled,LwIPVariant=OpenSource,led=2,ResetMethod=ck,DebugLevel=None____,FlashErase=all"
-  #matrix:
-  # Values are derived from boards.txt file (https://github.com/esp8266/Arduino/blob/2.4.1/boards.txt)
-  
-  # for 2.5.x 
-  # - BD="esp8266:esp8266:generic:xtal=80,vt=flash,exception=disabled,ResetMethod=ck,CrystalFreq=26,FlashFreq=40,FlashMode=qio,eesz=1M64,led=2,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200"
-  # for 2.4.x
-  
+     # Use this ESP8266 compiler version
+     - ESP8266_TOOLCHAIN_VERSION_TO_USE=2.4.1
+     # Install the following, additional libraries
+     - $ARDUINO_LIBRARIES_TO_USE="ArduinoJson:6.11.0,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.3.0"
+     # Values for boards are derived from boards.txt file (https://github.com/esp8266/Arduino/blob/2.4.1/boards.txt)
+     - BD="esp8266:esp8266:generic:CrystalFreq=26,FlashFreq=40,FlashMode=qio,CpuFrequency=80,FlashSize=1M64,Debug=Disabled,LwIPVariant=OpenSource,led=2,ResetMethod=ck,DebugLevel=None____,FlashErase=all"  
 
 # steps to do before the install
 before_install:
@@ -51,14 +49,14 @@ install:
   # the ESP8266 toolchain is added to the IDE
   - arduino --pref "boardsmanager.additional.urls=http://arduino.esp8266.com/stable/package_esp8266com_index.json" --save-prefs
   # install the toolchain with this particular version
-  - arduino --install-boards esp8266:esp8266:2.4.1
+  - arduino --install-boards esp8266:esp8266:$ESP8266_TOOLCHAIN_VERSION_TO_USE
   # configure the actual board to use
   - "echo BOARD: $BD"
   - arduino --board $BD --save-prefs
   # enable all compilation warnings
   - arduino --pref "compiler.warning_level=all" --save-prefs
   # install the required libraries
-  - arduino --install-library "ArduinoJson:6.11.0,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.3.0"
+  - arduino --install-library $ARDUINO_LIBRARIES_TO_USE
 
 # compile the Sketch
 script:
