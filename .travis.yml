@@ -43,7 +43,7 @@ before_install:
   - sudo mv arduino-$ARDUINO_VERSION_TO_USE /usr/local/share/arduino
   # add the arduino directory so executables are also considered/searched for in that arduino-subfolder
   - export PATH=$PATH:/usr/local/share/arduino
-  - sudo apt-get install ifupdown2
+  - sudo apt-get install ifupdown
 
 # perform the installation
 install:
