@@ -64,7 +64,9 @@ script:
   - echo $HOME
   - ls $PWD
   - cd $PWD
+  - sudo nmcli networking off
   - arduino --verify --board $BD Desk-Lamp-Alternative-Firmware.ino
+  - sudo nmcli networking on
 
 # notify the compilation result (passed or failed)
 notifications:
