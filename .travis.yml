@@ -43,7 +43,13 @@ before_install:
   - sudo mv arduino-$ARDUINO_VERSION_TO_USE /usr/local/share/arduino
   # add the arduino directory so executables are also considered/searched for in that arduino-subfolder
   - export PATH=$PATH:/usr/local/share/arduino
-  - sudo apt-get install ifupdown
+  # Arduino IDE adds a lot of noise caused by network traffic, trying to firewall it off
+  - iptables -P INPUT DROP
+  - iptables -P FORWARD DROP
+  - iptables -P OUTPUT ACCEPT
+  - iptables -A INPUT -i lo -j ACCEPT
+  - iptables -A OUTPUT -o lo -j ACCEPT
+  - iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # perform the installation
 install:
@@ -65,9 +71,7 @@ script:
   - echo $HOME
   - ls $PWD
   - cd $PWD
-  - sudo ifdown -a
   - arduino --verify --board $BD Desk-Lamp-Alternative-Firmware.ino
-  - sudo ifup -a
 
 # notify the compilation result (passed or failed)
 notifications:
