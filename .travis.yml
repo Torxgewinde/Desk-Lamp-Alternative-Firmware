@@ -44,12 +44,12 @@ before_install:
   # add the arduino directory so executables are also considered/searched for in that arduino-subfolder
   - export PATH=$PATH:/usr/local/share/arduino
   # Arduino IDE adds a lot of noise caused by network traffic, trying to firewall it off
-  - iptables -P INPUT DROP
-  - iptables -P FORWARD DROP
-  - iptables -P OUTPUT ACCEPT
-  - iptables -A INPUT -i lo -j ACCEPT
-  - iptables -A OUTPUT -o lo -j ACCEPT
-  - iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  - sudo iptables -P INPUT DROP
+  - sudo iptables -P FORWARD DROP
+  - sudo iptables -P OUTPUT ACCEPT
+  - sudo iptables -A INPUT -i lo -j ACCEPT
+  - sudo iptables -A OUTPUT -o lo -j ACCEPT
+  - sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # perform the installation
 install:
