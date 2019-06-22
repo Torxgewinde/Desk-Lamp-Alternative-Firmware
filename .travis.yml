@@ -72,9 +72,19 @@ script:
   - ls $PWD
   - cd $PWD
   - arduino --verify --board $BD Desk-Lamp-Alternative-Firmware.ino
+  - cp /tmp/arduino_build_*/*.bin firmware.bin
 
 # notify the compilation result (passed or failed)
 notifications:
   email:
     on_success: change
     on_failure: change
+    
+# upload compiled firmware as asset
+deploy:
+  provider: releases
+  api_key: $GITHUB_PERSONAL_ACCESS_TOKEN
+  file: "firmware.bin"
+  skip_cleanup: true
+  on:
+    tags: true
