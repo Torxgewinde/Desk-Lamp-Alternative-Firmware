@@ -62,6 +62,8 @@ install:
   - arduino --board $BD --save-prefs
   # enable all compilation warnings
   - arduino --pref "compiler.warning_level=all" --save-prefs
+  # build in this folder
+  - arduino --pref "build.path=build" --save-prefs
   # install the required libraries
   - arduino --install-library $ARDUINO_LIBRARIES_TO_USE
 
@@ -72,9 +74,19 @@ script:
   - ls $PWD
   - cd $PWD
   - arduino --verify --board $BD Desk-Lamp-Alternative-Firmware.ino
+  - ls -l build
 
 # notify the compilation result (passed or failed)
 notifications:
   email:
     on_success: change
     on_failure: change
+    
+# upload compiled firmware as asset
+deploy:
+  provider: releases
+  api_key: $GITHUB_PERSONAL_ACCESS_TOKEN
+  file: "build/Desk-Lamp-Alternative-Firmware.ino.bin"
+  skip_cleanup: true
+  on:
+    tags: true
