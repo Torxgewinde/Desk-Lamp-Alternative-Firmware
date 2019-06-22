@@ -74,7 +74,7 @@ script:
   - ls $PWD
   - cd $PWD
   - arduino --verify --board $BD Desk-Lamp-Alternative-Firmware.ino
-  - cp build/Desk-Lamp-Alternative-Firmware.ino.bin firmware.bin || ls -l build
+  - ls -l build
 
 # notify the compilation result (passed or failed)
 notifications:
@@ -86,7 +86,7 @@ notifications:
 deploy:
   provider: releases
   api_key: $GITHUB_PERSONAL_ACCESS_TOKEN
-  file: "firmware.bin"
+  file: "build/Desk-Lamp-Alternative-Firmware.ino.bin"
   skip_cleanup: true
   on:
     tags: true
