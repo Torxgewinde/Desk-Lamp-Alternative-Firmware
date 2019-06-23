@@ -68,7 +68,7 @@ bool handleFileRead(String path){
     if(SPIFFS.exists(pathWithGz))
       path += ".gz";
     File file = SPIFFS.open(path, "r");
-    size_t sent = server.streamFile(file, contentType);
+    server.streamFile(file, contentType);
     file.close();
     return true;
   }
@@ -104,8 +104,6 @@ void handleColorGET() {
 
   root["ratio"] = g_ratio;
   root["brightness"] = g_brightness;
-
-  uint8_t warmwhite, coldwhite;
 
   root["ww"] = (int)(255 * g_ratio * g_brightness);
   root["cw"] = (int)(255 * (1-g_ratio) * g_brightness);
@@ -215,7 +213,7 @@ void handleAllGET() {
 }
 
 /******************************************************************************
-Description.: handles requests to "/config.json"
+Description.: handles requests to CONFIG_FILE
               if HTTP-GET parameters set new values, those are stored
               it sends the contents of the file "config.json" to the HTTP-client
 Input Value.: -
@@ -235,7 +233,7 @@ void handleConfigGET() {
     writeConfig();
   }
 
-  if(!handleFileRead("/config.json"))
+  if(!handleFileRead(CONFIG_FILE))
     server.send(404, "text/plain", "FileNotFound");
 }
 
@@ -256,7 +254,7 @@ void setup_webserver() {
   server.on("/all", HTTP_GET, handleAllGET);
   server.on("/color", HTTP_GET, handleColorGET);
   server.on("/split", HTTP_GET, handleSplitGET);
-  server.on("/config.json", HTTP_GET, handleConfigGET);
+  server.on(CONFIG_FILE, HTTP_GET, handleConfigGET);
 
   /* deleted the files present on SPIFFS file system */
   server.on("/format", HTTP_GET, [](){

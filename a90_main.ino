@@ -38,6 +38,7 @@ void setup(void){
   Log("XIAOMI Desk Lamp starting up");
   Log("Compiled at: " __DATE__ " - " __TIME__);
   
+  Log("initializing SPIFFS");
   if( !SPIFFS.begin() ) {
     Log("SPIFFS not mounted correctly, retrying...");
     delay(1000);
@@ -51,6 +52,7 @@ void setup(void){
   }
 
   // read configuration file
+  Log("reading config from file or use default values");
   readConfig();
 
   // apply brightness and ratio from config
@@ -60,9 +62,16 @@ void setup(void){
   // apply hostname
   wifi_station_set_hostname(configuration.hostname);
   
+  Log("initializing LEDs");
   setup_LEDs();
+  
+  Log("initializing WiFi");
   setup_wifi();
+  
+  Log("initializing Webserver");
   setup_webserver();
+  
+  Log("initializing knob");
   setup_knob();
 
   state = CONSTANTCOLOR;
@@ -82,7 +91,7 @@ void loop(void) {
   if(state == RESET_CONFIGURATION) {
     Log("deleting configuration file /config.json");
     
-    SPIFFS.remove("/config.json");
+    SPIFFS.remove(CONFIG_FILE);
 
     //keep running for ~5 more seconds, then restart
     for(int i=0; i<5000; i++) {

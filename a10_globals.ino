@@ -62,6 +62,8 @@ void Log(String text) {
   Serial.println(text);
 }
 
+#define CONFIG_FILE "/config.json"
+
 // configuration, values are either from SPIFFS or default values
 struct {
   char hostname[64];
@@ -76,14 +78,14 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void readConfig() {
-  File configFile = SPIFFS.open("/config.json", "r");
+  File configFile = SPIFFS.open(CONFIG_FILE, "r");
 
   StaticJsonDocument<512> root;
   
   DeserializationError error = deserializeJson(root, configFile);
 
   if(error)
-    Log("Failed to read config file /config.json from SPIFFS, using default values");
+    Log("Failed to read config file from SPIFFS, using default values");
 
   strlcpy(configuration.hostname, root["hostname"] | "XIAOMI-DESK-LAMP", sizeof(configuration.hostname));
   configuration.ratio = root["ratio"] | 1.0;
@@ -100,8 +102,8 @@ Input Value.: -
 Return Value: -
 ******************************************************************************/
 void writeConfig() {
-
-  File configFile = SPIFFS.open("/config.json", "w");
+  File configFile = SPIFFS.open(CONFIG_FILE, "w");
+  
   if (!configFile) {
     Log("Could not open config file in SPIFFS");
     return;
