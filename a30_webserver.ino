@@ -22,7 +22,7 @@
 
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#include <FS.h>
+#include "LittleFS.h"
 
 ESP8266WebServer server(80);
 File fsUploadFile;
@@ -64,10 +64,10 @@ bool handleFileRead(String path){
   if(path.endsWith("/")) path += "index.htm";
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
-    if(SPIFFS.exists(pathWithGz))
+  if(LittleFS.exists(pathWithGz) || LittleFS.exists(path)){
+    if(LittleFS.exists(pathWithGz))
       path += ".gz";
-    File file = SPIFFS.open(path, "r");
+    File file = LittleFS.open(path, "r");
     server.streamFile(file, contentType);
     file.close();
     return true;
@@ -148,7 +148,7 @@ void handleSplitGET() {
 
 /******************************************************************************
 Description.: handles uploaded files
-              this is needed to handle new files to be stored in the SPIFFS
+              this is needed to handle new files to be stored in the Filesystem
               partition of the flash.
               A convenient way to update the HTML and config files is using
               a BASH file which is part of the project
@@ -171,7 +171,7 @@ void handleFileUpload() {
     if( !filename.startsWith("/") )
       filename = "/"+filename;
    
-    fsUploadFile = SPIFFS.open(filename, "w");
+    fsUploadFile = LittleFS.open(filename, "w");
     filename = String();
   } else if(upload.status == UPLOAD_FILE_WRITE) {
     if(fsUploadFile)
@@ -245,7 +245,7 @@ Return Value: -
 ******************************************************************************/
 void setup_webserver() {  
   //called when the url is not defined here
-  //use it to load content from SPIFFS
+  //use it to load content from filesystem
   server.onNotFound([](){
     if(!handleFileRead(server.uri()))
       server.send(404, "text/plain", "FileNotFound");
@@ -256,14 +256,14 @@ void setup_webserver() {
   server.on("/split", HTTP_GET, handleSplitGET);
   server.on(CONFIG_FILE, HTTP_GET, handleConfigGET);
 
-  /* deleted the files present on SPIFFS file system */
+  /* deleted the files present on filesystem */
   server.on("/format", HTTP_GET, [](){
     if ( !g_enableUpdates ) {
       server.send(200, "text/plain", "locked");
       return;
     }
     
-    String result=SPIFFS.format()?"OK":"NOK";
+    String result=LittleFS.format()?"OK":"NOK";
     server.send(200, "text/plain", result);
     });
     

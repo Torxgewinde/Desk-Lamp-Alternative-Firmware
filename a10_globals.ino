@@ -21,7 +21,7 @@
 ********************************************************************************/
 
 #include <ArduinoJson.h>
-#include <FS.h>
+#include "LittleFS.h"
 #include <deque>
 
 //determine array length
@@ -64,7 +64,7 @@ void Log(String text) {
 
 #define CONFIG_FILE "/config.json"
 
-// configuration, values are either from SPIFFS or default values
+// configuration, values are either from filesystem or default values
 struct {
   char hostname[64];
   float ratio, brightness;
@@ -73,19 +73,19 @@ struct {
 } configuration;
 
 /******************************************************************************
-Description.: read config file from SPIFFS
+Description.: read config file from filesystem
 Input Value.: -
 Return Value: -
 ******************************************************************************/
 void readConfig() {
-  File configFile = SPIFFS.open(CONFIG_FILE, "r");
+  File configFile = LittleFS.open(CONFIG_FILE, "r");
 
   StaticJsonDocument<512> root;
   
   DeserializationError error = deserializeJson(root, configFile);
 
   if(error)
-    Log("Failed to read config file from SPIFFS, using default values");
+    Log("Failed to read config file from filesystem, using default values");
 
   strlcpy(configuration.hostname, root["hostname"] | "XIAOMI-DESK-LAMP", sizeof(configuration.hostname));
   configuration.ratio = root["ratio"] | 1.0;
@@ -97,15 +97,15 @@ void readConfig() {
 }
 
 /******************************************************************************
-Description.: save config file to SPIFFS
+Description.: save config file to filesystem
 Input Value.: -
 Return Value: -
 ******************************************************************************/
 void writeConfig() {
-  File configFile = SPIFFS.open(CONFIG_FILE, "w");
+  File configFile = LittleFS.open(CONFIG_FILE, "w");
   
   if (!configFile) {
-    Log("Could not open config file in SPIFFS");
+    Log("Could not open config file in filesystem");
     return;
   }
 
@@ -121,7 +121,7 @@ void writeConfig() {
 
   int bytesWritten = serializeJson(root, configFile);
   if (bytesWritten == 0) {
-    Log("Could not store config in SPIFFS");
+    Log("Could not store config in filesystem");
   }
 
   configFile.close();

@@ -36,8 +36,8 @@ Hardware:
 Arduino Settings:
 - Generic ESP8266 Module
 - CPU Frequency 80 Mhz
-- Flash Size 1 M (64k SPIFFS)
-- Flash Mode is QIO
+- Flash Size 2M (64k Filesystem)
+- Flash Mode is DOUT
 - Crystal Frequency is 26 MHz
 - Reset Method "ck"
 

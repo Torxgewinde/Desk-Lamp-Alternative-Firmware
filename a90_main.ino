@@ -38,16 +38,16 @@ void setup(void){
   Log("XIAOMI Desk Lamp starting up");
   Log("Compiled at: " __DATE__ " - " __TIME__);
   
-  Log("initializing SPIFFS");
-  if( !SPIFFS.begin() ) {
-    Log("SPIFFS not mounted correctly, retrying...");
+  Log("initializing Filesystem");
+  if( !LittleFS.begin() ) {
+    Log("Filesystem not mounted correctly, retrying...");
     delay(1000);
-    if( !SPIFFS.begin() ) {
+    if( !LittleFS.begin() ) {
       Log("mounting failed twice, formatting and then restarting");
-      SPIFFS.format();
+      LittleFS.format();
       ESP.restart();
     } else {
-      Log("SPIFFS mounted at second try, proceeding as usual");
+      Log("Filesystem mounted at second try, proceeding as usual");
     }
   }
 
@@ -91,7 +91,7 @@ void loop(void) {
   if(state == RESET_CONFIGURATION) {
     Log("deleting configuration file /config.json");
     
-    SPIFFS.remove(CONFIG_FILE);
+    LittleFS.remove(CONFIG_FILE);
 
     //keep running for ~5 more seconds, then restart
     for(int i=0; i<5000; i++) {
