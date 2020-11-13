@@ -21,14 +21,14 @@
 ********************************************************************************
 
 IDE and toolchain:
-- Arduino 1.8.9
-- ESP8266 Toolchain 2.4.1 <-- Beware: 2.4.2 does not work! analogWrite() has strange issues
+- Arduino 1.8.13
+- ESP8266 Toolchain 2.7.4
 
 Additional libraries:
-- Arduino JSON, Version 6.11.0
-- WiFiManager, Version 0.14.0
+- Arduino JSON, Version 6.17.1
+- WiFiManager, Version 0.15.0
 - Encoder, Version 1.4.1
-- OneButton, Version 1.3.0
+- OneButton, Version 1.5.0
 
 Hardware: 
 - Xiaomi Desk Lamp

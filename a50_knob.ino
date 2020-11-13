@@ -20,6 +20,8 @@
 #                                                                              #
 ********************************************************************************/
 
+/* circumvent bug: https://github.com/PaulStoffregen/Encoder/issues/40 */
+#define ENCODER_DO_NOT_USE_INTERRUPTS
 #include <Encoder.h>
 #include <OneButton.h>
 
