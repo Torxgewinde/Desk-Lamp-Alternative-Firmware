@@ -25,11 +25,11 @@ language: generic
 # define variables
 env:
   global:
-     - ARDUINO_VERSION_TO_USE=1.8.9
+     - ARDUINO_VERSION_TO_USE=1.8.13
      # Use this ESP8266 compiler version
-     - ESP8266_TOOLCHAIN_VERSION_TO_USE=2.4.1
+     - ESP8266_TOOLCHAIN_VERSION_TO_USE=2.7.4
      # Install the following, additional libraries
-     - $ARDUINO_LIBRARIES_TO_USE="ArduinoJson:6.11.0,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.3.0"
+     - $ARDUINO_LIBRARIES_TO_USE="ArduinoJson:6.17.1,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.5.0"
      # Values for boards are derived from boards.txt file (https://github.com/esp8266/Arduino/blob/2.4.1/boards.txt)
      - BD="esp8266:esp8266:generic:CrystalFreq=26,FlashFreq=40,FlashMode=qio,CpuFrequency=80,FlashSize=1M64,Debug=Disabled,LwIPVariant=OpenSource,led=2,ResetMethod=ck,DebugLevel=None____,FlashErase=all"  
 
