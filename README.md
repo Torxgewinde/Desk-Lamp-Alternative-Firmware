@@ -45,13 +45,13 @@ To monitor the log messages, use the `log.sh` BASH script. It refreshes the log 
 
 Upload files for the webserver
 ------------------------------
-The internal webserver serves files from SPIFFS. To fill SPIFFS the most convenient way is creating a subfolder `data` in the sketch-folder and upload with the provided BASH-file `upload.sh`.
+The internal webserver serves files from device-internal-flash-filesystem. To fill the internal flash-filesystem, the most convenient way is creating a subfolder `data` in the sketch-folder and upload with the provided BASH-file `upload.sh`.
 
-Uploading all files from `./data` to SPIFFS:
+Uploading all files from `./data` to flash-filesystem:
 
     ./upload_files.sh 192.168.2.99
     
-Upload a single file file to SPIFFS:
+Upload a single file file to flash-filesystem:
 
     ./upload_files.sh 192.168.2.99 myfile 
 
