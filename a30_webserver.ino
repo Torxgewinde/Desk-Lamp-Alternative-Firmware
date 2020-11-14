@@ -193,7 +193,7 @@ void handleAllGET() {
   String json;
 
   // translate current state to string
-  for(int i=0; i<LENGTH_OF(state_map); i++) {
+  for(uint8_t i=0; i<LENGTH_OF(state_map); i++) {
     if(state_map[i].state == state) {
       root["state"] = state_map[i].state_as_string;
       root["state_human_readable"] = state_map[i].human_readable_string;

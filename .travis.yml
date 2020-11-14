@@ -61,7 +61,7 @@ install:
   - "echo BOARD: $BD"
   - arduino --board $BD --save-prefs
   # enable all compilation warnings
-  #- arduino --pref "compiler.warning_level=all" --save-prefs
+  - arduino --pref "compiler.warning_level=all" --save-prefs
   # build in this folder
   - arduino --pref "build.path=build" --save-prefs
   # install the required libraries
