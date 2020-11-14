@@ -31,7 +31,7 @@ env:
      # Install the following, additional libraries
      - $ARDUINO_LIBRARIES_TO_USE="ArduinoJson:6.17.1,WiFiManager:0.14.0,Encoder:1.4.1,OneButton:1.5.0"
      # Values for boards are derived from boards.txt file (https://github.com/esp8266/Arduino/blob/2.7.4/boards.txt)
-     - BD="esp8266:esp8266:esp8285:CrystalFreq=26,xtal=80,ResetMethod=ck,eesz=2M64,dbg=Disabled,ip=src,led=2,ResetMethod=ck,wipe=all"  
+     - BD="esp8266:esp8266:esp8285:CrystalFreq=26,xtal=80,ResetMethod=ck,eesz=2M64,dbg=Disabled,ip=lm2f,led=2,ResetMethod=ck,wipe=all"  
 
 # steps to do before the install
 before_install:
