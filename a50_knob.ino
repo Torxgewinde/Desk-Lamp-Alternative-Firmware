@@ -34,6 +34,9 @@ Encoder knob(ENCODER_A_PIN, ENCODER_B_PIN);
 OneButton button(ENCODER_SWITCH_PIN, true);
 OneButton resetSwitch(RESET_BUTTON_PIN, true);
 
+// remember the last time user double clicked onto knob
+static unsigned long LastDoubleClick = 0;
+
 /******************************************************************************
 Description.: prepare the rotary knob encoder and switch
 Input Value.: -
@@ -60,6 +63,18 @@ void setup_knob() {
   
   button.attachDoubleClick([](){
     Log("Double Click!");
+
+    // double click twice within 2 seconds toggles WiFi
+    if( millis()-LastDoubleClick <= 2000 ) {
+      Log("doubleclicked knob-button twice, this toggles WiFi on/off");
+      configuration.disable_WiFi = !configuration.disable_WiFi;
+      writeConfig();
+      delay(200);
+      Log("restart now");
+      ESP.restart();
+    }
+    
+    LastDoubleClick = millis();
   });
 
   resetSwitch.attachLongPressStart([](){
@@ -71,6 +86,8 @@ void setup_knob() {
     Log("Reset button was pressed twice, this toggles WiFi on/off");
     configuration.disable_WiFi = !configuration.disable_WiFi;
     writeConfig();
+    delay(200);
+    Log("restart now");
     ESP.restart();
   });
 }

@@ -11,7 +11,9 @@ Features
 --------
  * This alternative firmware compiles with the Arduino IDE.
  * It provides a webserver and URLs for controlling the light.
- * The rotary knob reacts on single click and toggles between OFF an ON
+ * The rotary knob reacts on single click and toggles between OFF and ON
+ * Per default after flashing the firmware WiFi is OFF
+ * Per default the lamp has WiFi switched off. Double-clicking the knob twice within two seconds toggles WiFi ON and OFF
 
 Initial upload of firmware
 --------------------------

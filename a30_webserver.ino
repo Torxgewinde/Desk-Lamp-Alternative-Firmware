@@ -275,7 +275,7 @@ void setup_webserver() {
   server.on("/unlock", HTTP_GET, [](){
     if( server.arg("password") == "securitybyobscurity" ) {
       g_enableUpdates = true;
-      httpUpdater.setup(&server, "/update");
+      httpUpdater.setup(&server);
     }
     
     server.send(200, "text/plain", "enableUpdates: "+String(g_enableUpdates));

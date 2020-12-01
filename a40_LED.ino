@@ -193,11 +193,11 @@ void loop_LEDs() {
       break;
       
     case CONSTANTCOLOR:
-      setLedsAnimatedRB(g_ratio, g_brightness, 500);
+      setLedsAnimatedRB(g_ratio, g_brightness, 200);
       break;
 
     case LIGHTSOFF:
-      setLedsAnimated(0, 0, 2000);
+      setLedsAnimated(0, 0, 500);
       break;
 
     case RESET_CONFIGURATION:

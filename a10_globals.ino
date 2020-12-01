@@ -91,7 +91,7 @@ void readConfig() {
   configuration.ratio = root["ratio"] | 1.0;
   configuration.brightness = root["brightness"] | 1.0;
   configuration.send_WLAN_keep_alive_packet = root["send_WLAN_keep_alive_packet"] | true;
-  configuration.disable_WiFi = root["disable_WiFi"] | false;
+  configuration.disable_WiFi = root["disable_WiFi"] | true;
 
   configFile.close();
 }
